@@ -2,6 +2,7 @@ package com.company;
 
 import java.net.*;
 import java.io.*;
+import java.security.cert.CRL;
 import java.util.*;
 
 /**
@@ -25,20 +26,22 @@ public class SMTPConnection {
     /* Create an SMTPConnection object. Create the socket and the 
        associated streams. Initialize SMTP connection. */
     public SMTPConnection(Envelope envelope) throws IOException {
-        // connection = /* Fill in */;
-        fromServer = /* Fill in */;
-        toServer =   /* Fill in */;
+        connection = new Socket(,SMTP_PORT); //create standard socket connection on port 25
+        fromServer = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        toServer = new DataOutputStream(connection.getOutputStream());
 
-        /* Fill in */
 	/* Read a line from server and check that the reply code is 220.
 	   If not, throw an IOException. */
-        /* Fill in */
+        String text = fromServer.readLine();
+        System.out.println(parseReply(text));
+        if (parseReply(text) != 220)
+            throw new IOException("Reply code not 220");
+        System.out.println("Reply code not 220");
 
 	/* SMTP handshake. We need the name of the local machine.
 	   Send the appropriate SMTP handshake command. */
         String localhost =/* Fill in */;
-        sendCommand( /* Fill in */ );
-
+        sendCommand("HELLO " + localhost + CRLF, 250);
         isConnected = true;
     }
 
@@ -46,11 +49,12 @@ public class SMTPConnection {
        correct order. No checking for errors, just throw them to the
        caller. */
     public void send(Envelope envelope) throws IOException {
-        /* Fill in */
 	/* Send all the necessary commands to send a message. Call
 	   sendCommand() to do the dirty work. Do _not_ catch the
 	   exception thrown from sendCommand(). */
-        /* Fill in */
+        sendCommand("MAIL FROM: " + envelope.Sender + CRLF,250);
+        sendCommand("ReCIPIENT TO: " + envelope.Recipient + CRLF ,250);
+        sendCommand("DATA"+ CRLF ,354);
     }
 
     /* Close the connection. First, terminate on SMTP level, then
@@ -58,7 +62,7 @@ public class SMTPConnection {
     public void close() {
         isConnected = false;
         try {
-            sendCommand( /* Fill in */ );
+            sendCommand("QUIT" + CRLF, 221);
             // connection.close();
         } catch (IOException e) {
             System.out.println("Unable to close connection: " + e);
@@ -69,19 +73,24 @@ public class SMTPConnection {
     /* Send an SMTP command to the server. Check that the reply code is
        what is is supposed to be according to RFC 821. */
     private void sendCommand(String command, int rc) throws IOException {
-        /* Fill in */
         /* Write command to server and read reply from server. */
-        /* Fill in */
+       System.out.println("Command to server" + command + CRLF);
+       toServer.writeBytes(command + CRLF);
+       System.out.println("Server reply" + fromServer.readLine());
 
-        /* Fill in */
 	/* Check that the server's reply code is the same as the parameter
 	   rc. If not, throw an IOException. */
-        /* Fill in */
+       if (parseReply(fromServer.readLine()) !=rc){
+           System.out.println("The reply code is no the same as rc");
+           throw new IOException("The reply code is not the same as rc");
+       }
     }
 
     /* Parse the reply line from the server. Returns the reply code. */
     private int parseReply(String reply) {
-        /* Fill in */
+        StringTokenizer tokens = new StringTokenizer(reply,"");
+        String rc = tokens.nextToken();
+        return Integer.parseInt(rc);
     }
 
     /* Destructor. Closes the connection if something bad happens. */
