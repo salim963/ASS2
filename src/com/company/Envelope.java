@@ -26,7 +26,7 @@ public class Envelope {
     public Message Message;
 
     /* Create the envelope. */
-    public Envelope(Message message, String localServer) throws UnknownHostException {
+    public Envelope(Message message, String localServer) {
         /* Get sender and recipient. */
         Sender = message.getFrom();
         Recipient = message.getTo();
@@ -44,10 +44,13 @@ public class Envelope {
         } catch (UnknownHostException e) {
             System.out.println("Unknown host: " + DestHost);
             System.out.println(e);
-            throw e;
+            return;
         }
-        return;
-    }
+
+        return;}
+        public InetAddress getDestAddr(){
+        return DestAddr;
+        }
 
     /* Escape the message by doubling all periods at the beginning of
        a line. */

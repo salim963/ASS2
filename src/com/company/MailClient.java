@@ -115,18 +115,13 @@ public class MailClient extends Frame {
 
 	    /* Create the envelope, open the connection and try to send
 	       the message. */
+            Envelope envelope = new Envelope(mailMessage,serverField.getText());
+
             try {
-                Envelope envelope = new Envelope(mailMessage,
-                        serverField.getText());
-            } catch (UnknownHostException e) {
-                /* If there is an error, do not go further */
-                return;
-            }
-            try {
-                Envelope envelope;
                 SMTPConnection connection = new SMTPConnection(envelope);
                 connection.send(envelope);
                 connection.close();
+
             } catch (IOException error) {
                 System.out.println("Sending failed: " + error);
                 return;
