@@ -54,6 +54,7 @@ public class Envelope {
 
     /* Escape the message by doubling all periods at the beginning of
        a line. */
+    
     private Message escapeMessage(Message message) {
         String escapedBody = "";
         String token;

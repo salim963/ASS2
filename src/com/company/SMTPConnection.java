@@ -26,7 +26,7 @@ public class SMTPConnection {
     /* Create an SMTPConnection object. Create the socket and the 
        associated streams. Initialize SMTP connection. */
     public SMTPConnection(Envelope envelope) throws IOException {
-        connection = new Socket(,SMTP_PORT); //create standard socket connection on port 25
+        connection = new Socket("192.168.43.81",SMTP_PORT); //create standard socket connection on port 25
         fromServer = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         toServer = new DataOutputStream(connection.getOutputStream());
 
@@ -40,7 +40,7 @@ public class SMTPConnection {
 
 	/* SMTP handshake. We need the name of the local machine.
 	   Send the appropriate SMTP handshake command. */
-        String localhost =/* Fill in */;
+        String localhost ="192.168.43.81"/* Fill in */;
         sendCommand("HELLO " + localhost + CRLF, 250);
         isConnected = true;
     }
